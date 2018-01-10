@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="273b9ec4-a9cb-4c1d-bb0f-bb92ee3832b6" name="Default" comment="" />
+    <list default="true" id="273b9ec4-a9cb-4c1d-bb0f-bb92ee3832b6" name="Default" comment="">
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+    </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -45,7 +48,7 @@
     <detection-done>true</detection-done>
     <sorting>DEFINITION_ORDER</sorting>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="-7" />
     <option name="width" value="947" />
     <option name="height" value="735" />
@@ -155,15 +158,15 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1515606650874</updated>
-      <workItem from="1515606652858" duration="229000" />
+      <workItem from="1515606652858" duration="331000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="229000" />
+    <option name="totallyTimeSpent" value="331000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1382" height="744" extended-state="7" />
+    <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
