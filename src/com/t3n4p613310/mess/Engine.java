@@ -1,6 +1,5 @@
 package com.t3n4p613310.mess;
 
-import org.lwjgl.*;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
@@ -17,6 +16,11 @@ public class Engine {
 
     // The window handle
     private long window;
+    private boolean[] keyDown = new boolean[GLFW.GLFW_KEY_LAST];
+    private boolean leftMouseDown;
+    private boolean rightMouseDown;
+    private int width,height;
+    private boolean resizeViewPort;
 
     public void run() {
 
@@ -33,8 +37,6 @@ public class Engine {
     }
 
     private void init() {
-        // Setup an error callback. The default implementation
-        // will print the error message in System.err.
         GLFWErrorCallback.createPrint(System.err).set();
 
         // Initialize GLFW. Most GLFW functions will not work before doing this.
@@ -44,29 +46,30 @@ public class Engine {
         glfwDefaultWindowHints(); // optional, the current window hints are already the default
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE); // the window will stay hidden after creation
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
+        glfwWindowHint(GLFW_SAMPLES, 4);
 
         // Create the window
         window = glfwCreateWindow(500, 500, "MESS", NULL, NULL);
-        if ( window == NULL ) throw new RuntimeException("Failed to create the GLFW window");
+        if ( window == NULL ) throw new RuntimeException("Failed to create the window");
 
-        // Setup a key callback. It will be called every time a key is pressed, repeated or released.
-        glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
-            if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
-                glfwSetWindowShouldClose(window, true); // We will detect this in the rendering loop
+        glfwSetKeyCallback(window, (windowIn, keyIn, scancodeIn, actionIn, modsIn) -> {
+            if (keyIn == GLFW_KEY_UNKNOWN) return;
+            if (keyIn == GLFW_KEY_ESCAPE && actionIn == GLFW_RELEASE) glfwSetWindowShouldClose(window, true);
+            keyDown[keyIn] = (actionIn == GLFW_PRESS || actionIn == GLFW_REPEAT);
+        });
 
-            //utility stubs
-            if(key == GLFW_KEY_Q && action == GLFW_RELEASE);
-            if(key == GLFW_KEY_E && action == GLFW_RELEASE);
+        glfwSetMouseButtonCallback(window, (windowIn, buttonIn, actionIn, modsIn) -> {
+            System.out.println(actionIn);
+            if (buttonIn == GLFW_MOUSE_BUTTON_LEFT)
+                leftMouseDown = (actionIn == GLFW_PRESS);
+            else if (buttonIn == GLFW_MOUSE_BUTTON_RIGHT)
+                rightMouseDown = (actionIn == GLFW_PRESS);
+        });
 
-            //movement stubs
-            if(key == GLFW_KEY_W && action == GLFW_RELEASE);
-            if(key == GLFW_KEY_W && action == GLFW_PRESS);
-            if(key == GLFW_KEY_S && action == GLFW_RELEASE);
-            if(key == GLFW_KEY_S && action == GLFW_PRESS);
-            if(key == GLFW_KEY_A && action == GLFW_RELEASE);
-            if(key == GLFW_KEY_A && action == GLFW_PRESS);
-            if(key == GLFW_KEY_D && action == GLFW_RELEASE);
-            if(key == GLFW_KEY_D && action == GLFW_PRESS);
+        glfwSetWindowSizeCallback(window, (windowIn, widthIn, heightIn) -> {
+            width = widthIn;
+            height = heightIn;
+            resizeViewPort = true;
         });
 
         // Get the thread stack and push a new frame
@@ -113,6 +116,39 @@ public class Engine {
         while ( !glfwWindowShouldClose(window) ) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
+            //resize viewport
+            if(resizeViewPort)
+            {
+                if (width > height)
+                    glViewport((width - height) >>> 1, 0, height, height);
+                else
+                    glViewport(0, (height - width) >>> 1, width, width);
+                resizeViewPort=false;
+            }
+
+            drawLoadingScreen();
+            //glColor3d(Math.random()/Math.pow(Math.random(),Math.random()),Math.random()/2,Math.random()/2);
+
+            //glRotated(Math.random()*90-45,Math.random()*2-1,Math.random()*2-1,Math.random()*2-1);
+
+            // draw quad
+            //glBegin(GL_QUADS);
+            //glVertex2f( 0.75F, 0.75F);
+            //glVertex2f( 0.75F,-0.75F);
+            //glVertex2f(-0.75F,-0.75F);
+            //glVertex2f(-0.75F, 0.75F);
+            //glVertex3d(0.5,0.5,0.5);
+            //glVertex3d(0.5,0.5,-.5);
+            //glVertex3d(0.5,-.5,0.5);
+            //glVertex3d(0.5,-.5,-.5);
+            //glVertex3d(-.5,0.5,0.5);
+            //glVertex3d(-.5,0.5,-.5);
+            //glVertex3d(-.5,-.5,0.5);
+            //glVertex3d(-.5,-.5,-.5);
+            //glEnd();
+
+
+
 
             glfwSwapBuffers(window); // swap the color buffers
 
@@ -120,5 +156,31 @@ public class Engine {
             // invoked during this call.
             glfwPollEvents();
         }
+    }
+
+    void drawHUD() {
+        drawContextBox();
+        drawHotBar();
+        drawClock();
+        drawHint();
+    }
+
+    //draw stubs
+    private void drawHint(){}
+    private void drawClock(){}
+    private void drawHotBar(){}
+    private void drawContextBox(){}
+
+    private void drawLoadingScreen(){
+        glColor3d(Math.random()/Math.pow(Math.random(),Math.random()),Math.random()/2,Math.random()/2);
+        glRotated(Math.random()*90-45,Math.random()*2-1,Math.random()*2-1,Math.random()*2-1);
+
+        // draw quad
+        glBegin(GL_QUADS);
+        glVertex2f( 0.75F, 0.75F);
+        glVertex2f( 0.75F,-0.75F);
+        glVertex2f(-0.75F,-0.75F);
+        glVertex2f(-0.75F, 0.75F);
+        glEnd();
     }
 }
