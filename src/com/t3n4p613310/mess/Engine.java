@@ -1,16 +1,23 @@
 package com.t3n4p613310.mess;
 
-import org.lwjgl.glfw.*;
-import org.lwjgl.opengl.*;
-import org.lwjgl.system.*;
+import org.lwjgl.BufferUtils;
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.glfw.GLFWImage;
+import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.opengl.GL;
+import org.lwjgl.system.MemoryStack;
 
-import java.nio.*;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 
-import static org.lwjgl.glfw.Callbacks.*;
+import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.system.MemoryStack.*;
-import static org.lwjgl.system.MemoryUtil.*;
+import static org.lwjgl.opengl.GL15.*;
+import static org.lwjgl.system.MemoryStack.stackPush;
+import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class Engine {
 
@@ -52,6 +59,8 @@ public class Engine {
         window = glfwCreateWindow(500, 500, "MESS", NULL, NULL);
         if ( window == NULL ) throw new RuntimeException("Failed to create the window");
 
+        setIcon();
+
         glfwSetKeyCallback(window, (windowIn, keyIn, scancodeIn, actionIn, modsIn) -> {
             if (keyIn == GLFW_KEY_UNKNOWN) return;
             if (keyIn == GLFW_KEY_ESCAPE && actionIn == GLFW_RELEASE) glfwSetWindowShouldClose(window, true);
@@ -59,7 +68,6 @@ public class Engine {
         });
 
         glfwSetMouseButtonCallback(window, (windowIn, buttonIn, actionIn, modsIn) -> {
-            System.out.println(actionIn);
             if (buttonIn == GLFW_MOUSE_BUTTON_LEFT)
                 leftMouseDown = (actionIn == GLFW_PRESS);
             else if (buttonIn == GLFW_MOUSE_BUTTON_RIGHT)
@@ -108,8 +116,21 @@ public class Engine {
         // bindings available for use.
         GL.createCapabilities();
 
+        //texture stuff
+        //float pixels[] = {
+        //        0.0f, 0.0f, 0.0f,   1.0f, 0.0f, 0.0f,
+        //        1.0f, 0.0f, 0.0f,   0.0f, 0.0f, 0.0f
+        //};
+        //int texture = glGenTextures();
+        //glBindTexture(GL_TEXTURE_2D, texture);
+        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 2, 2, 0, GL_RGB, GL_FLOAT, pixels);
+
         // Set the clear color
-        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        glClearColor(0.1f, 0.1f, 0.1f, 0.1f);
 
         // Run the rendering loop until the user has attempted to close
         // the window or has pressed the ESCAPE key.
@@ -126,29 +147,6 @@ public class Engine {
                 resizeViewPort=false;
             }
 
-            drawLoadingScreen();
-            //glColor3d(Math.random()/Math.pow(Math.random(),Math.random()),Math.random()/2,Math.random()/2);
-
-            //glRotated(Math.random()*90-45,Math.random()*2-1,Math.random()*2-1,Math.random()*2-1);
-
-            // draw quad
-            //glBegin(GL_QUADS);
-            //glVertex2f( 0.75F, 0.75F);
-            //glVertex2f( 0.75F,-0.75F);
-            //glVertex2f(-0.75F,-0.75F);
-            //glVertex2f(-0.75F, 0.75F);
-            //glVertex3d(0.5,0.5,0.5);
-            //glVertex3d(0.5,0.5,-.5);
-            //glVertex3d(0.5,-.5,0.5);
-            //glVertex3d(0.5,-.5,-.5);
-            //glVertex3d(-.5,0.5,0.5);
-            //glVertex3d(-.5,0.5,-.5);
-            //glVertex3d(-.5,-.5,0.5);
-            //glVertex3d(-.5,-.5,-.5);
-            //glEnd();
-
-
-
 
             glfwSwapBuffers(window); // swap the color buffers
 
@@ -158,29 +156,57 @@ public class Engine {
         }
     }
 
-    void drawHUD() {
-        drawContextBox();
-        drawHotBar();
-        drawClock();
-        drawHint();
+    //icon code
+
+    private void setIcon()
+    {
+        GLFWImage image = GLFWImage.malloc();
+        int size = 1<<((int)(Math.random()*16));
+        image.set(size, size, genIcon(size));
+        GLFWImage.Buffer images = GLFWImage.malloc(1);
+        images.put(0, image);
+        glfwSetWindowIcon(window, images);
+        images.free();
+        image.free();
     }
 
-    //draw stubs
-    private void drawHint(){}
-    private void drawClock(){}
-    private void drawHotBar(){}
-    private void drawContextBox(){}
-
-    private void drawLoadingScreen(){
-        glColor3d(Math.random()/Math.pow(Math.random(),Math.random()),Math.random()/2,Math.random()/2);
-        glRotated(Math.random()*90-45,Math.random()*2-1,Math.random()*2-1,Math.random()*2-1);
-
-        // draw quad
-        glBegin(GL_QUADS);
-        glVertex2f( 0.75F, 0.75F);
-        glVertex2f( 0.75F,-0.75F);
-        glVertex2f(-0.75F,-0.75F);
-        glVertex2f(-0.75F, 0.75F);
-        glEnd();
+    private static ByteBuffer genIcon(int sizeIn)
+    {
+        ByteBuffer buffer = BufferUtils.createByteBuffer(sizeIn*sizeIn*4);
+        int counter = 0;
+        for (int i = 0; i < sizeIn; i++)
+            for (int j = 0; j < sizeIn; j++)
+            {
+                buffer.put(counter + 0,(byte)Math.floor(Math.random()*255));
+                buffer.put(counter + 1,(byte)Math.floor(Math.random()*255));
+                buffer.put(counter + 2,(byte)Math.floor(Math.random()*255));
+                buffer.put(counter + 3,(byte)Math.floor(Math.random()*255));
+                counter += 4;
+            }
+        return buffer;
     }
+
+    private void createEntity(Entity entityIn) throws IOException
+    {
+        entityIn.positionVbo = glGenBuffers();
+        glBindBuffer(GL_ARRAY_BUFFER, entityIn.positionVbo);
+        glBufferData(GL_ARRAY_BUFFER, entityIn.positions, GL_STATIC_DRAW);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        entityIn.normalVbo = glGenBuffers();
+        glBindBuffer(GL_ARRAY_BUFFER, entityIn.normalVbo);
+        glBufferData(GL_ARRAY_BUFFER, entityIn.normals, GL_STATIC_DRAW);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+    }
+
+    private void drawEntity(Entity entityIn) {
+        glBindBuffer(GL_ARRAY_BUFFER, entityIn.positionVbo);
+        glVertexPointer(3, GL_FLOAT, 0, 0);
+        glEnableClientState(GL_NORMAL_ARRAY);
+        glBindBuffer(GL_ARRAY_BUFFER, entityIn.normalVbo);
+        glNormalPointer(GL_FLOAT, 0, 0);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glDrawArrays(GL_TRIANGLES, 0, entityIn.numVertices);
+        glDisableClientState(GL_NORMAL_ARRAY);
+    }
+
 }
