@@ -8,9 +8,9 @@ import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryStack;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
+import java.util.ArrayList;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
@@ -23,11 +23,12 @@ public class Engine {
 
     // The window handle
     private long window;
-    private boolean[] keyDown = new boolean[GLFW.GLFW_KEY_LAST];
-    private boolean leftMouseDown;
-    private boolean rightMouseDown;
     private int width,height;
     private boolean resizeViewPort;
+    private boolean[] keyDown = new boolean[GLFW.GLFW_KEY_LAST];
+    private ArrayList<Entity> Entity = new ArrayList<Entity>();
+    private boolean leftMouseDown;
+    private boolean rightMouseDown;
 
     public void run() {
 
@@ -116,26 +117,17 @@ public class Engine {
         // bindings available for use.
         GL.createCapabilities();
 
-        //texture stuff
-        //float pixels[] = {
-        //        0.0f, 0.0f, 0.0f,   1.0f, 0.0f, 0.0f,
-        //        1.0f, 0.0f, 0.0f,   0.0f, 0.0f, 0.0f
-        //};
-        //int texture = glGenTextures();
-        //glBindTexture(GL_TEXTURE_2D, texture);
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 2, 2, 0, GL_RGB, GL_FLOAT, pixels);
-
         // Set the clear color
         glClearColor(0.1f, 0.1f, 0.1f, 0.1f);
+
+        Entity block = new Block();
+        createEntity(block);
 
         // Run the rendering loop until the user has attempted to close
         // the window or has pressed the ESCAPE key.
         while ( !glfwWindowShouldClose(window) ) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
+            drawEntity(block);
 
             //resize viewport
             if(resizeViewPort)
@@ -173,20 +165,28 @@ public class Engine {
     private static ByteBuffer genIcon(int sizeIn)
     {
         ByteBuffer buffer = BufferUtils.createByteBuffer(sizeIn*sizeIn*4);
+        int point = (sizeIn/2);
+        int maxDistance = 2*(sizeIn*sizeIn);
         int counter = 0;
         for (int i = 0; i < sizeIn; i++)
+        {
+            int y = (i - point);
             for (int j = 0; j < sizeIn; j++)
             {
-                buffer.put(counter + 0,(byte)Math.floor(Math.random()*255));
-                buffer.put(counter + 1,(byte)Math.floor(Math.random()*255));
-                buffer.put(counter + 2,(byte)Math.floor(Math.random()*255));
-                buffer.put(counter + 3,(byte)Math.floor(Math.random()*255));
+                int x = (j - point);
+                byte val = (byte)(255-(((255)*(x * x + y * y))/maxDistance));
+                //System.out.println(x+" "+y+" "+val);
+                buffer.put(counter + 0, (byte)(val/1));
+                buffer.put(counter + 1, (byte)(val/2));
+                buffer.put(counter + 2, (byte)(val/3));
+                buffer.put(counter + 3, (byte)0);
                 counter += 4;
             }
+        }
         return buffer;
     }
 
-    private void createEntity(Entity entityIn) throws IOException
+    private void createEntity(Entity entityIn)
     {
         entityIn.positionVbo = glGenBuffers();
         glBindBuffer(GL_ARRAY_BUFFER, entityIn.positionVbo);
