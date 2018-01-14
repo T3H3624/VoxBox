@@ -2,13 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="273b9ec4-a9cb-4c1d-bb0f-bb92ee3832b6" name="Default" comment="">
-      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/artifacts/MESS_jar.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/com_sudoplay_joise_joise_Release.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/src/META-INF/MANIFEST.MF" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/MESS.iml" afterPath="$PROJECT_DIR$/MESS.iml" />
-      <change beforePath="$PROJECT_DIR$/src/com/t3n4p613310/mess/Engine.java" afterPath="$PROJECT_DIR$/src/com/t3n4p613310/mess/Engine.java" />
-      <change beforePath="$PROJECT_DIR$/src/com/t3n4p613310/mess/Entity.java" afterPath="$PROJECT_DIR$/src/com/t3n4p613310/mess/Entity.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -280,12 +274,12 @@
       <workItem from="1515760314886" duration="2319000" />
       <workItem from="1515768072776" duration="3779000" />
       <workItem from="1515781452249" duration="12503000" />
-      <workItem from="1515871063045" duration="4968000" />
+      <workItem from="1515871063045" duration="5337000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="55607000" />
+    <option name="totallyTimeSpent" value="55976000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="7" />
