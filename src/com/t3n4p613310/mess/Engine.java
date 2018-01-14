@@ -156,7 +156,7 @@ public class Engine {
     {
         GLFWImage image = GLFWImage.malloc();
         int size = 2<<((int)(10));
-        image.set(size, size, genIcon(size));
+        image.set(64, 64, genIcon(64));
         GLFWImage.Buffer images = GLFWImage.malloc(1);
         images.put(0, image);
         glfwSetWindowIcon(window, images);
@@ -167,16 +167,14 @@ public class Engine {
     private static ByteBuffer genIcon(int sizeIn)
     {
         ByteBuffer buffer = BufferUtils.createByteBuffer(sizeIn*sizeIn*4);
-        int point = (sizeIn/2);
-        int maxDistance = 2*(sizeIn*sizeIn);
         int counter = 0;
 
-        ModuleBasisFunction  func2 = new ModuleBasisFunction();
-        func2.setType(ModuleBasisFunction.BasisType.GRADVAL);
-        func2.setInterpolation(ModuleBasisFunction.InterpolationType.QUINTIC);
-        func2.setSeed(684684654);
+        ModuleBasisFunction  func = new ModuleBasisFunction();
+        func.setType(ModuleBasisFunction.BasisType.GRADVAL);
+        func.setInterpolation(ModuleBasisFunction.InterpolationType.QUINTIC);
+        func.setSeed(genSeed());
         ModuleAbs mod = new ModuleAbs();
-        mod.setSource(func2);
+        mod.setSource(func);
         for (int i = 0; i < sizeIn; i++)
         {
             for (int j = 0; j < sizeIn; j++)
@@ -212,6 +210,11 @@ public class Engine {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glDrawArrays(GL_TRIANGLES, 0, entityIn.numVertices);
         glDisableClientState(GL_NORMAL_ARRAY);
+    }
+
+    private static long genSeed()
+    {
+        return (System.nanoTime()-System.currentTimeMillis())*Thread.activeCount();
     }
 
 }
