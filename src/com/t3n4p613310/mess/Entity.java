@@ -6,18 +6,19 @@ import java.nio.DoubleBuffer;
 
 public class Entity
 {
-    private double[] position = new double[3];
-    private double[] orientation = new double[3];
-    private double[] scale = new double[3];
-    long entID=0;
-    int modelID=0;
+    long entID = 0;
+    int modelID = 0;
     DoubleBuffer positions;
     DoubleBuffer normals;
     int positionVbo;
     int normalVbo;
     int numVertices;
+    private double[] position = new double[3];
+    private double[] orientation = new double[3];
+    private double[] scale = new double[3];
 
-    Entity(){
+    Entity()
+    {
         positions = BufferUtils.createDoubleBuffer(9);
         positions.put(1).put(1).put(-1);
         positions.put(1).put(0).put(-0);
