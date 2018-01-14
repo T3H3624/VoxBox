@@ -1,0 +1,46 @@
+Manifest-Version: 1.0
+Class-Path: lwjgl-assimp-natives-linux.jar lwjgl-assimp-natives-macos.
+ jar lwjgl-assimp-natives-windows.jar lwjgl-assimp.jar lwjgl-bgfx-nati
+ ves-linux.jar lwjgl-bgfx-natives-macos.jar lwjgl-bgfx-natives-windows
+ .jar lwjgl-bgfx.jar lwjgl-egl.jar lwjgl-glfw-natives-linux.jar lwjgl-
+ glfw-natives-macos.jar lwjgl-glfw-natives-windows.jar lwjgl-glfw.jar 
+ lwjgl-jawt.jar lwjgl-jemalloc-natives-linux.jar lwjgl-jemalloc-native
+ s-macos.jar lwjgl-jemalloc-natives-windows.jar lwjgl-jemalloc.jar lwj
+ gl-lmdb-natives-linux.jar lwjgl-lmdb-natives-macos.jar lwjgl-lmdb-nat
+ ives-windows.jar lwjgl-lmdb.jar lwjgl-lz4-natives-linux.jar lwjgl-lz4
+ -natives-macos.jar lwjgl-lz4-natives-windows.jar lwjgl-lz4.jar lwjgl-
+ nanovg-natives-linux.jar lwjgl-nanovg-natives-macos.jar lwjgl-nanovg-
+ natives-windows.jar lwjgl-nanovg.jar lwjgl-natives-linux.jar lwjgl-na
+ tives-macos.jar lwjgl-natives-windows.jar lwjgl-nfd-natives-linux.jar
+  lwjgl-nfd-natives-macos.jar lwjgl-nfd-natives-windows.jar lwjgl-nfd.
+ jar lwjgl-nuklear-natives-linux.jar lwjgl-nuklear-natives-macos.jar l
+ wjgl-nuklear-natives-windows.jar lwjgl-nuklear.jar lwjgl-odbc.jar lwj
+ gl-openal-natives-linux.jar lwjgl-openal-natives-macos.jar lwjgl-open
+ al-natives-windows.jar lwjgl-openal.jar lwjgl-opencl.jar lwjgl-opengl
+ -natives-linux.jar lwjgl-opengl-natives-macos.jar lwjgl-opengl-native
+ s-windows.jar lwjgl-opengl.jar lwjgl-opengles-natives-linux.jar lwjgl
+ -opengles-natives-macos.jar lwjgl-opengles-natives-windows.jar lwjgl-
+ opengles.jar lwjgl-openvr-natives-linux.jar lwjgl-openvr-natives-maco
+ s.jar lwjgl-openvr-natives-windows.jar lwjgl-openvr.jar lwjgl-ovr-nat
+ ives-linux.jar lwjgl-ovr-natives-macos.jar lwjgl-ovr-natives-windows.
+ jar lwjgl-ovr.jar lwjgl-par-natives-linux.jar lwjgl-par-natives-macos
+ .jar lwjgl-par-natives-windows.jar lwjgl-par.jar lwjgl-remotery-nativ
+ es-linux.jar lwjgl-remotery-natives-macos.jar lwjgl-remotery-natives-
+ windows.jar lwjgl-remotery.jar lwjgl-rpmalloc-natives-linux.jar lwjgl
+ -rpmalloc-natives-macos.jar lwjgl-rpmalloc-natives-windows.jar lwjgl-
+ rpmalloc.jar lwjgl-sse-natives-linux.jar lwjgl-sse-natives-macos.jar 
+ lwjgl-sse-natives-windows.jar lwjgl-sse.jar lwjgl-stb-natives-linux.j
+ ar lwjgl-stb-natives-macos.jar lwjgl-stb-natives-windows.jar lwjgl-st
+ b.jar lwjgl-tinyexr-natives-linux.jar lwjgl-tinyexr-natives-macos.jar
+  lwjgl-tinyexr-natives-windows.jar lwjgl-tinyexr.jar lwjgl-tinyfd-nat
+ ives-linux.jar lwjgl-tinyfd-natives-macos.jar lwjgl-tinyfd-natives-wi
+ ndows.jar lwjgl-tinyfd.jar lwjgl-tootle-natives-linux.jar lwjgl-tootl
+ e-natives-macos.jar lwjgl-tootle-natives-windows.jar lwjgl-tootle.jar
+  lwjgl-vulkan.jar lwjgl-xxhash-natives-linux.jar lwjgl-xxhash-natives
+ -macos.jar lwjgl-xxhash-natives-windows.jar lwjgl-xxhash.jar lwjgl-yo
+ ga-natives-linux.jar lwjgl-yoga-natives-macos.jar lwjgl-yoga-natives-
+ windows.jar lwjgl-yoga.jar lwjgl-zstd-natives-linux.jar lwjgl-zstd-na
+ tives-macos.jar lwjgl-zstd-natives-windows.jar lwjgl-zstd.jar lwjgl.j
+ ar
+Main-Class: com.t3n4p613310.mess.Main
+

@@ -8,5 +8,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="lwjgl-assimp-javadoc" level="project" />
+    <orderEntry type="library" name="com.sudoplay.joise:joise:Release" level="project" />
   </component>
 </module>

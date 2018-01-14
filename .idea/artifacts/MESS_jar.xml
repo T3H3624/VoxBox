@@ -1,0 +1,11 @@
+<component name="ArtifactManager">
+  <artifact name="MESS:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/MESS_jar</output-path>
+    <root id="root">
+      <element id="archive" name="MESS.jar">
+        <element id="module-output" name="MESS" />
+      </element>
+      <element id="library" level="project" name="lwjgl-assimp-javadoc" />
+    </root>
+  </artifact>
+</component>

@@ -19,12 +19,12 @@ public class Entity
 
     Entity(){
         positions = BufferUtils.createDoubleBuffer(9);
-        positions.put(0.1).put(0.1).put(0.1);
-        positions.put(0.1).put(0.1).put(-0.1);
-        positions.put(0.1).put(-0.1).put(0.1);
+        positions.put(1).put(1).put(-1);
+        positions.put(1).put(0).put(-0);
+        positions.put(1).put(0).put(-1);
         normals = BufferUtils.createDoubleBuffer(10);
-        positions.put(0.1).put(0.1).put(0.1);
-        positions.put(0.1).put(0.1).put(-0.1);
-        positions.put(0.1).put(-0.1).put(0.1);
+        normals.put(0.1).put(0.1).put(-0.1);
+        normals.put(0.1).put(0.1).put(-0.1);
+        normals.put(0.1).put(-0.1).put(-0.1);
     }
 }

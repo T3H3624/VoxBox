@@ -1,5 +1,7 @@
 package com.t3n4p613310.mess;
 
+import com.sudoplay.joise.module.ModuleAbs;
+import com.sudoplay.joise.module.ModuleBasisFunction;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
@@ -127,7 +129,6 @@ public class Engine {
         // the window or has pressed the ESCAPE key.
         while ( !glfwWindowShouldClose(window) ) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
-            drawEntity(block);
 
             //resize viewport
             if(resizeViewPort)
@@ -139,6 +140,7 @@ public class Engine {
                 resizeViewPort=false;
             }
 
+            drawEntity(block);
 
             glfwSwapBuffers(window); // swap the color buffers
 
@@ -153,7 +155,7 @@ public class Engine {
     private void setIcon()
     {
         GLFWImage image = GLFWImage.malloc();
-        int size = 1<<((int)(Math.random()*16));
+        int size = 2<<((int)(10));
         image.set(size, size, genIcon(size));
         GLFWImage.Buffer images = GLFWImage.malloc(1);
         images.put(0, image);
@@ -168,17 +170,20 @@ public class Engine {
         int point = (sizeIn/2);
         int maxDistance = 2*(sizeIn*sizeIn);
         int counter = 0;
+
+        ModuleBasisFunction  func2 = new ModuleBasisFunction();
+        func2.setType(ModuleBasisFunction.BasisType.GRADVAL);
+        func2.setInterpolation(ModuleBasisFunction.InterpolationType.QUINTIC);
+        func2.setSeed(684684654);
+        ModuleAbs mod = new ModuleAbs();
+        mod.setSource(func2);
         for (int i = 0; i < sizeIn; i++)
         {
-            int y = (i - point);
             for (int j = 0; j < sizeIn; j++)
             {
-                int x = (j - point);
-                byte val = (byte)(255-(((255)*(x * x + y * y))/maxDistance));
-                //System.out.println(x+" "+y+" "+val);
-                buffer.put(counter + 0, (byte)(val/1));
-                buffer.put(counter + 1, (byte)(val/2));
-                buffer.put(counter + 2, (byte)(val/3));
+                buffer.put(counter + 0, (byte)(255*mod.get(i,j)));
+                buffer.put(counter + 1, (byte)(255*mod.get(i,j)));
+                buffer.put(counter + 2, (byte)(255*mod.get(i,j)));
                 buffer.put(counter + 3, (byte)0);
                 counter += 4;
             }
