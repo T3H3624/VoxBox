@@ -1,6 +1,6 @@
 package com.t3n4p613310.mess;
 
-public class EntityLiving
+public class EntityLiving extends Entity
 {
     String name = "";
     private Item[] inventory = new Item[64];
