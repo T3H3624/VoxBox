@@ -133,8 +133,8 @@ public class Engine
         //setup view matrix
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        //glOrtho(-5, 5, -5, 5, -5, 5);
-        glMatrixMode(GL_MODELVIEW);
+        //glOrtho(-5, 5, -5, 5, -50, 50);
+        //glMatrixMode(GL_MODELVIEW);
 
         //enable depth testing
         glEnable(GL_DEPTH_TEST);
@@ -144,6 +144,8 @@ public class Engine
         glClearColor(0.1f, 0.1f, 0.1f, 0.1f);
 
         buildCube();
+
+        Entity player = new Player();
 
         // Run the rendering loop until the user has attempted to close
         // the window or has pressed the ESCAPE key.
@@ -161,12 +163,28 @@ public class Engine
                 resizeViewPort = false;
             }
 
-            if(keyDown[GLFW.GLFW_KEY_W]) glTranslated(0,0,-0.1);
-            if(keyDown[GLFW.GLFW_KEY_S]) glTranslated(0,0,0.1);
-            if(keyDown[GLFW.GLFW_KEY_A]) glTranslated(-0.1,0,0);
-            if(keyDown[GLFW.GLFW_KEY_D]) glTranslated(0.1,0,0);
-            if(keyDown[GLFW.GLFW_KEY_LEFT])glRotated(1,0,1,0);
-            if(keyDown[GLFW.GLFW_KEY_RIGHT])glRotated(-1,0,1,0);
+            if(keyDown[GLFW.GLFW_KEY_W]){
+                player.position[0]+=Math.sin(player.rotation[2]);
+                player.position[2]-=Math.cos(player.rotation[2]);
+            }
+            if(keyDown[GLFW.GLFW_KEY_S]){
+                player.position[0]-=Math.sin(player.rotation[2]);
+                player.position[2]+=Math.cos(player.rotation[2]);
+            }
+            if(keyDown[GLFW.GLFW_KEY_A]){
+                player.position[0]-=Math.cos(player.rotation[2]);
+                player.position[2]+=Math.sin(player.rotation[2]);
+            }
+            if(keyDown[GLFW.GLFW_KEY_D]){
+                player.position[0]+=Math.cos(player.rotation[2]);
+                player.position[2]-=Math.sin(player.rotation[2]);
+            }
+            if(keyDown[GLFW.GLFW_KEY_LEFT]){
+                player.rotation[2]+=0.01;
+            }
+            if(keyDown[GLFW.GLFW_KEY_RIGHT]){
+                player.rotation[2]-=0.01;
+            }
 
             //System.out.println(player.position[0]+" "+player.position[2]);
 

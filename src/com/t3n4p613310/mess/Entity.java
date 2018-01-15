@@ -12,7 +12,7 @@ public class Entity
     int normalVbo;
     int numVertices;
     double[] position = new double[3];
-    double[] orientation = new double[3];
+    double[] rotation = new double[3];
     double[] scale = new double[3];
 
     Entity()
