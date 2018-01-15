@@ -133,7 +133,7 @@ public class Engine
         //setup view matrix
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        glOrtho(-5, 5, -5, 5, -5, 5);
+        //glOrtho(-5, 5, -5, 5, -5, 5);
         glMatrixMode(GL_MODELVIEW);
 
         //enable depth testing
@@ -142,11 +142,6 @@ public class Engine
 
         // Set the clear color
         glClearColor(0.1f, 0.1f, 0.1f, 0.1f);
-
-        //Entity block = new Block();
-        //Entity player = new Player();
-        //createEntity(block);
-        //createEntity(player);
 
         buildCube();
 
@@ -170,14 +165,12 @@ public class Engine
             if(keyDown[GLFW.GLFW_KEY_S]) glTranslated(0,0,0.1);
             if(keyDown[GLFW.GLFW_KEY_A]) glTranslated(-0.1,0,0);
             if(keyDown[GLFW.GLFW_KEY_D]) glTranslated(0.1,0,0);
-
-            //glRotated(-player.position[2],0,1,0);
+            if(keyDown[GLFW.GLFW_KEY_LEFT])glRotated(1,0,1,0);
+            if(keyDown[GLFW.GLFW_KEY_RIGHT])glRotated(-1,0,1,0);
 
             //System.out.println(player.position[0]+" "+player.position[2]);
 
             //draw entitys
-            //drawEntity(block);
-            //drawEntity(player);
 
             glDrawElements(GL_TRIANGLES, 6 * 6, GL_UNSIGNED_INT, 0L);
 
