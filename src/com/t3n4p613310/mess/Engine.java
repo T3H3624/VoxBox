@@ -11,14 +11,12 @@ import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
@@ -133,17 +131,15 @@ public class Engine
         //setup view matrix
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        //glOrtho(-5, 5, -5, 5, -50, 50);
-        //glMatrixMode(GL_MODELVIEW);
+        glOrtho(-5, 5, -5, 5, 50, -50);
+        glMatrixMode(GL_MODELVIEW);
 
         //enable depth testing
         glEnable(GL_DEPTH_TEST);
-        glEnable(GL_CULL_FACE);
+        //glEnable(GL_CULL_FACE);
 
         // Set the clear color
         glClearColor(0.1f, 0.1f, 0.1f, 0.1f);
-
-        buildCube();
 
         Entity player = new Player();
 
@@ -163,32 +159,49 @@ public class Engine
                 resizeViewPort = false;
             }
 
+            double speed = 0.0001;
+
             if(keyDown[GLFW.GLFW_KEY_W]){
-                player.position[0]+=Math.sin(player.rotation[2]);
-                player.position[2]-=Math.cos(player.rotation[2]);
+                player.position[0]+=Math.sin(player.rotation[2])*speed;
+                player.position[2]-=Math.cos(player.rotation[2])*speed;
             }
             if(keyDown[GLFW.GLFW_KEY_S]){
-                player.position[0]-=Math.sin(player.rotation[2]);
-                player.position[2]+=Math.cos(player.rotation[2]);
+                player.position[0]-=Math.sin(player.rotation[2])*speed;
+                player.position[2]+=Math.cos(player.rotation[2])*speed;
             }
             if(keyDown[GLFW.GLFW_KEY_A]){
-                player.position[0]-=Math.cos(player.rotation[2]);
-                player.position[2]+=Math.sin(player.rotation[2]);
+                player.position[0]-=Math.cos(player.rotation[2])*speed;
+                player.position[2]+=Math.sin(player.rotation[2])*speed;
             }
             if(keyDown[GLFW.GLFW_KEY_D]){
-                player.position[0]+=Math.cos(player.rotation[2]);
-                player.position[2]-=Math.sin(player.rotation[2]);
+                player.position[0]+=Math.cos(player.rotation[2])*speed;
+                player.position[2]-=Math.sin(player.rotation[2])*speed;
             }
             if(keyDown[GLFW.GLFW_KEY_LEFT]){
-                player.rotation[2]+=0.01;
+                player.rotation[1]+=0.01;
+                player.rotation[1]%=180;
             }
             if(keyDown[GLFW.GLFW_KEY_RIGHT]){
-                player.rotation[2]-=0.01;
+                player.rotation[1]-=0.01;
+                player.rotation[1]%=180;
             }
 
-            //System.out.println(player.position[0]+" "+player.position[2]);
+
+            glRotated(player.rotation[2], 0, 0, 1);
+            glRotated(player.rotation[1], 0, 1, 0);
+            glRotated(player.rotation[0], 1, 0, 0);
+            glTranslated(-player.position[0],-player.position[1],-player.position[2]);
 
             //draw entitys
+            glBegin(GL_TRIANGLES);
+            glColor3f(1f, 0f, 0f);
+            glVertex3f(-0.6f, -0.4f, 0f);
+            glColor3f(0f, 1f, 0f);
+            glVertex3f(0.6f, -0.4f, 0f);
+            glColor3f(0f, 0f, 1f);
+            glVertex3f(0f, 0.6f, 0f);
+            glEnd();
+
 
             glDrawElements(GL_TRIANGLES, 6 * 6, GL_UNSIGNED_INT, 0L);
 
@@ -257,74 +270,5 @@ public class Engine
     private void drawEntity(Entity entityIn)
     {
 
-    }
-
-    private void buildCube() {
-        // create buffer to hold the vertex colors
-        FloatBuffer cb = BufferUtils.createFloatBuffer(3 * 4 * 6);
-        // create buffer to hold the vertex positions
-        FloatBuffer pb = BufferUtils.createFloatBuffer(3 * 4 * 6);
-        // define all faces of a cube as quads.
-        // this has redundant vertices in it, but it's easy to create
-        // an element buffer for it.
-        for (int i = 0; i < 4; i++)
-            cb.put(0.0f).put(0.0f).put(0.2f);
-        pb.put( 0.5f).put(-0.5f).put(-0.5f);
-        pb.put(-0.5f).put(-0.5f).put(-0.5f);
-        pb.put(-0.5f).put( 0.5f).put(-0.5f);
-        pb.put( 0.5f).put( 0.5f).put(-0.5f);
-        for (int i = 0; i < 4; i++)
-            cb.put(0.0f).put(0.0f).put(1.0f);
-        pb.put( 0.5f).put(-0.5f).put( 0.5f);
-        pb.put( 0.5f).put( 0.5f).put( 0.5f);
-        pb.put(-0.5f).put( 0.5f).put( 0.5f);
-        pb.put(-0.5f).put(-0.5f).put( 0.5f);
-        for (int i = 0; i < 4; i++)
-            cb.put(1.0f).put(0.0f).put(0.0f);
-        pb.put( 0.5f).put(-0.5f).put(-0.5f);
-        pb.put( 0.5f).put( 0.5f).put(-0.5f);
-        pb.put( 0.5f).put( 0.5f).put( 0.5f);
-        pb.put( 0.5f).put(-0.5f).put( 0.5f);
-        for (int i = 0; i < 4; i++)
-            cb.put(0.2f).put(0.0f).put(0.0f);
-        pb.put(-0.5f).put(-0.5f).put( 0.5f);
-        pb.put(-0.5f).put( 0.5f).put( 0.5f);
-        pb.put(-0.5f).put( 0.5f).put(-0.5f);
-        pb.put(-0.5f).put(-0.5f).put(-0.5f);
-        for (int i = 0; i < 4; i++)
-            cb.put(0.0f).put(1.0f).put(0.0f);
-        pb.put( 0.5f).put( 0.5f).put( 0.5f);
-        pb.put( 0.5f).put( 0.5f).put(-0.5f);
-        pb.put(-0.5f).put( 0.5f).put(-0.5f);
-        pb.put(-0.5f).put( 0.5f).put( 0.5f);
-        for (int i = 0; i < 4; i++)
-            cb.put(0.0f).put(0.2f).put(0.0f);
-        pb.put( 0.5f).put(-0.5f).put(-0.5f);
-        pb.put( 0.5f).put(-0.5f).put( 0.5f);
-        pb.put(-0.5f).put(-0.5f).put( 0.5f);
-        pb.put(-0.5f).put(-0.5f).put(-0.5f);
-        pb.flip();
-        cb.flip();
-        // build element buffer
-        IntBuffer eb = BufferUtils.createIntBuffer(6 * 6);
-        for (int i = 0; i < 4 * 6; i += 4)
-            eb.put(i).put(i+1).put(i+2).put(i+2).put(i+3).put(i+0);
-        eb.flip();
-        // setup vertex positions buffer
-        int cubeVbo = glGenBuffers();
-        glBindBuffer(GL_ARRAY_BUFFER, cubeVbo);
-        glBufferData(GL_ARRAY_BUFFER, pb, GL_STATIC_DRAW);
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glVertexPointer(3, GL_FLOAT, 0, 0);
-        // setup vertex color buffer
-        int cubeCb = glGenBuffers();
-        glBindBuffer(GL_ARRAY_BUFFER, cubeCb);
-        glBufferData(GL_ARRAY_BUFFER, cb, GL_STATIC_DRAW);
-        glEnableClientState(GL_COLOR_ARRAY);
-        glColorPointer(3, GL_FLOAT, 0, 0);
-        // setup element buffer
-        int cubeEbo = glGenBuffers();
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cubeEbo);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, eb, GL_STATIC_DRAW);
     }
 }
