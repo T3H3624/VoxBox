@@ -8,6 +8,6 @@ public class EntityLiving extends Entity
 
     EntityLiving()
     {
-
+        super();
     }
 }

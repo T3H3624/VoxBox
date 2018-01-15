@@ -11,6 +11,7 @@ import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 
@@ -33,35 +34,7 @@ public class Engine
     private boolean leftMouseDown;
     private boolean rightMouseDown;
 
-    private static ByteBuffer genIcon(int sizeIn)
-    {
-        ByteBuffer buffer = BufferUtils.createByteBuffer(sizeIn * sizeIn * 4);
-        int counter = 0;
 
-        ModuleBasisFunction func = new ModuleBasisFunction();
-        func.setType(ModuleBasisFunction.BasisType.GRADVAL);
-        func.setInterpolation(ModuleBasisFunction.InterpolationType.QUINTIC);
-        func.setSeed(genSeed());
-        ModuleAbs mod = new ModuleAbs();
-        mod.setSource(func);
-        for (int i = 0; i < sizeIn; i++)
-        {
-            for (int j = 0; j < sizeIn; j++)
-            {
-                buffer.put(counter + 0, (byte) (255 * mod.get(i, j)));
-                buffer.put(counter + 1, (byte) (255 * mod.get(i, j)));
-                buffer.put(counter + 2, (byte) (255 * mod.get(i, j)));
-                buffer.put(counter + 3, (byte) 0);
-                counter += 4;
-            }
-        }
-        return buffer;
-    }
-
-    private static long genSeed()
-    {
-        return (System.nanoTime() - System.currentTimeMillis()) * Thread.activeCount();
-    }
 
     public void run()
     {
@@ -77,8 +50,6 @@ public class Engine
         glfwTerminate();
         glfwSetErrorCallback(null).free();
     }
-
-    //icon code
 
     private void init()
     {
@@ -159,11 +130,25 @@ public class Engine
         // bindings available for use.
         GL.createCapabilities();
 
+        //setup view matrix
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        glOrtho(-5, 5, -5, 5, -5, 5);
+        glMatrixMode(GL_MODELVIEW);
+
+        //enable depth testing
+        glEnable(GL_DEPTH_TEST);
+        glEnable(GL_CULL_FACE);
+
         // Set the clear color
         glClearColor(0.1f, 0.1f, 0.1f, 0.1f);
 
-        Entity block = new Block();
-        createEntity(block);
+        //Entity block = new Block();
+        //Entity player = new Player();
+        //createEntity(block);
+        //createEntity(player);
+
+        buildCube();
 
         // Run the rendering loop until the user has attempted to close
         // the window or has pressed the ESCAPE key.
@@ -181,50 +166,154 @@ public class Engine
                 resizeViewPort = false;
             }
 
-            drawEntity(block);
+            if(keyDown[GLFW.GLFW_KEY_W]) glTranslated(0,0,-0.1);
+            if(keyDown[GLFW.GLFW_KEY_S]) glTranslated(0,0,0.1);
+            if(keyDown[GLFW.GLFW_KEY_A]) glTranslated(-0.1,0,0);
+            if(keyDown[GLFW.GLFW_KEY_D]) glTranslated(0.1,0,0);
 
-            glfwSwapBuffers(window); // swap the color buffers
+            //glRotated(-player.position[2],0,1,0);
 
-            // Poll for window events. The key callback above will only be
-            // invoked during this call.
+            //System.out.println(player.position[0]+" "+player.position[2]);
+
+            //draw entitys
+            //drawEntity(block);
+            //drawEntity(player);
+
+            glDrawElements(GL_TRIANGLES, 6 * 6, GL_UNSIGNED_INT, 0L);
+
+            glfwSwapBuffers(window); //swap the color buffers
+
+            //Poll for window events. The key callback above will only be
+            //invoked during this call.
             glfwPollEvents();
         }
     }
 
+    //icon code
+
     private void setIcon()
     {
-        GLFWImage image = GLFWImage.malloc();
-        int size = 2 << 10;
-        image.set(64, 64, genIcon(64));
-        GLFWImage.Buffer images = GLFWImage.malloc(1);
-        images.put(0, image);
+        int numberOfImages=10;
+        GLFWImage[] image = new GLFWImage[numberOfImages];
+        GLFWImage.Buffer images = GLFWImage.malloc(numberOfImages);
+        for(int i=0;i<numberOfImages;i++)
+        {
+            int sizeOfImage = 1<<i;
+            image[i] = GLFWImage.malloc();
+            image[i].set(sizeOfImage,sizeOfImage, genIcon(sizeOfImage));
+            images.put(i, image[i]);
+        }
         glfwSetWindowIcon(window, images);
         images.free();
-        image.free();
+        for(int i=0;i<numberOfImages;i++) image[i].free();
+    }
+
+    private static ByteBuffer genIcon(int sizeIn)
+    {
+        ByteBuffer buffer = BufferUtils.createByteBuffer(sizeIn * sizeIn * 4);
+        int counter = 0;
+
+        ModuleBasisFunction func = new ModuleBasisFunction();
+        func.setType(ModuleBasisFunction.BasisType.GRADVAL);
+        func.setInterpolation(ModuleBasisFunction.InterpolationType.QUINTIC);
+        func.setSeed(genSeed());
+        ModuleAbs mod = new ModuleAbs();
+        mod.setSource(func);
+        for (int i = 0; i < sizeIn; i++)
+        {
+            for (int j = 0; j < sizeIn; j++)
+            {
+                buffer.put(counter + 0, (byte) (255 * mod.get(i, j)));
+                buffer.put(counter + 1, (byte) (255 * mod.get(i, j)));
+                buffer.put(counter + 2, (byte) (255 * mod.get(i, j)));
+                buffer.put(counter + 3, (byte) 0);
+                counter += 4;
+            }
+        }
+        return buffer;
+    }
+
+    private static long genSeed()
+    {
+        return (System.nanoTime() - System.currentTimeMillis()) * Thread.activeCount();
     }
 
     private void createEntity(Entity entityIn)
     {
-        entityIn.positionVbo = glGenBuffers();
-        glBindBuffer(GL_ARRAY_BUFFER, entityIn.positionVbo);
-        glBufferData(GL_ARRAY_BUFFER, entityIn.positions, GL_STATIC_DRAW);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        entityIn.normalVbo = glGenBuffers();
-        glBindBuffer(GL_ARRAY_BUFFER, entityIn.normalVbo);
-        glBufferData(GL_ARRAY_BUFFER, entityIn.normals, GL_STATIC_DRAW);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
+
     }
 
     private void drawEntity(Entity entityIn)
     {
-        glBindBuffer(GL_ARRAY_BUFFER, entityIn.positionVbo);
-        glVertexPointer(3, GL_FLOAT, 0, 0);
-        glEnableClientState(GL_NORMAL_ARRAY);
-        glBindBuffer(GL_ARRAY_BUFFER, entityIn.normalVbo);
-        glNormalPointer(GL_FLOAT, 0, 0);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glDrawArrays(GL_TRIANGLES, 0, entityIn.numVertices);
-        glDisableClientState(GL_NORMAL_ARRAY);
+
     }
 
+    private void buildCube() {
+        // create buffer to hold the vertex colors
+        FloatBuffer cb = BufferUtils.createFloatBuffer(3 * 4 * 6);
+        // create buffer to hold the vertex positions
+        FloatBuffer pb = BufferUtils.createFloatBuffer(3 * 4 * 6);
+        // define all faces of a cube as quads.
+        // this has redundant vertices in it, but it's easy to create
+        // an element buffer for it.
+        for (int i = 0; i < 4; i++)
+            cb.put(0.0f).put(0.0f).put(0.2f);
+        pb.put( 0.5f).put(-0.5f).put(-0.5f);
+        pb.put(-0.5f).put(-0.5f).put(-0.5f);
+        pb.put(-0.5f).put( 0.5f).put(-0.5f);
+        pb.put( 0.5f).put( 0.5f).put(-0.5f);
+        for (int i = 0; i < 4; i++)
+            cb.put(0.0f).put(0.0f).put(1.0f);
+        pb.put( 0.5f).put(-0.5f).put( 0.5f);
+        pb.put( 0.5f).put( 0.5f).put( 0.5f);
+        pb.put(-0.5f).put( 0.5f).put( 0.5f);
+        pb.put(-0.5f).put(-0.5f).put( 0.5f);
+        for (int i = 0; i < 4; i++)
+            cb.put(1.0f).put(0.0f).put(0.0f);
+        pb.put( 0.5f).put(-0.5f).put(-0.5f);
+        pb.put( 0.5f).put( 0.5f).put(-0.5f);
+        pb.put( 0.5f).put( 0.5f).put( 0.5f);
+        pb.put( 0.5f).put(-0.5f).put( 0.5f);
+        for (int i = 0; i < 4; i++)
+            cb.put(0.2f).put(0.0f).put(0.0f);
+        pb.put(-0.5f).put(-0.5f).put( 0.5f);
+        pb.put(-0.5f).put( 0.5f).put( 0.5f);
+        pb.put(-0.5f).put( 0.5f).put(-0.5f);
+        pb.put(-0.5f).put(-0.5f).put(-0.5f);
+        for (int i = 0; i < 4; i++)
+            cb.put(0.0f).put(1.0f).put(0.0f);
+        pb.put( 0.5f).put( 0.5f).put( 0.5f);
+        pb.put( 0.5f).put( 0.5f).put(-0.5f);
+        pb.put(-0.5f).put( 0.5f).put(-0.5f);
+        pb.put(-0.5f).put( 0.5f).put( 0.5f);
+        for (int i = 0; i < 4; i++)
+            cb.put(0.0f).put(0.2f).put(0.0f);
+        pb.put( 0.5f).put(-0.5f).put(-0.5f);
+        pb.put( 0.5f).put(-0.5f).put( 0.5f);
+        pb.put(-0.5f).put(-0.5f).put( 0.5f);
+        pb.put(-0.5f).put(-0.5f).put(-0.5f);
+        pb.flip();
+        cb.flip();
+        // build element buffer
+        IntBuffer eb = BufferUtils.createIntBuffer(6 * 6);
+        for (int i = 0; i < 4 * 6; i += 4)
+            eb.put(i).put(i+1).put(i+2).put(i+2).put(i+3).put(i+0);
+        eb.flip();
+        // setup vertex positions buffer
+        int cubeVbo = glGenBuffers();
+        glBindBuffer(GL_ARRAY_BUFFER, cubeVbo);
+        glBufferData(GL_ARRAY_BUFFER, pb, GL_STATIC_DRAW);
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glVertexPointer(3, GL_FLOAT, 0, 0);
+        // setup vertex color buffer
+        int cubeCb = glGenBuffers();
+        glBindBuffer(GL_ARRAY_BUFFER, cubeCb);
+        glBufferData(GL_ARRAY_BUFFER, cb, GL_STATIC_DRAW);
+        glEnableClientState(GL_COLOR_ARRAY);
+        glColorPointer(3, GL_FLOAT, 0, 0);
+        // setup element buffer
+        int cubeEbo = glGenBuffers();
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cubeEbo);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, eb, GL_STATIC_DRAW);
+    }
 }
