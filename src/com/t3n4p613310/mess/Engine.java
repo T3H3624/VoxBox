@@ -31,6 +31,7 @@ public class Engine
     private ArrayList<Entity> Entity = new ArrayList<Entity>();
     private boolean leftMouseDown;
     private boolean rightMouseDown;
+    private long lastTick=0;
 
 
 
@@ -147,6 +148,10 @@ public class Engine
         // the window or has pressed the ESCAPE key.
         while (!glfwWindowShouldClose(window))
         {
+            while(System.currentTimeMillis()-lastTick<17);
+                lastTick=System.currentTimeMillis();
+
+
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
             //resize viewport
@@ -159,7 +164,7 @@ public class Engine
                 resizeViewPort = false;
             }
 
-            double speed = 0.0001;
+            double speed = 0.01;
 
             if(keyDown[GLFW.GLFW_KEY_W]){
                 player.position[0]+=Math.sin(player.rotation[2])*speed;
@@ -178,15 +183,15 @@ public class Engine
                 player.position[2]-=Math.sin(player.rotation[2])*speed;
             }
             if(keyDown[GLFW.GLFW_KEY_LEFT]){
-                player.rotation[1]+=0.01;
+                player.rotation[1]+=0.1;
                 player.rotation[1]%=180;
             }
             if(keyDown[GLFW.GLFW_KEY_RIGHT]){
-                player.rotation[1]-=0.01;
+                player.rotation[1]-=0.1;
                 player.rotation[1]%=180;
             }
 
-
+            //not the right way to do it
             glRotated(player.rotation[2], 0, 0, 1);
             glRotated(player.rotation[1], 0, 1, 0);
             glRotated(player.rotation[0], 1, 0, 0);
@@ -260,15 +265,5 @@ public class Engine
     private static long genSeed()
     {
         return (System.nanoTime() - System.currentTimeMillis()) * Thread.activeCount();
-    }
-
-    private void createEntity(Entity entityIn)
-    {
-
-    }
-
-    private void drawEntity(Entity entityIn)
-    {
-
     }
 }
