@@ -1,4 +1,4 @@
-# MESS
+# VoxBox
 
 ## Build Instructions
 
