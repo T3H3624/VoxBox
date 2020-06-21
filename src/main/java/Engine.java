@@ -7,29 +7,25 @@ import org.lwjgl.glfw.GLFWImage;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryStack;
+import static org.lwjgl.opengl.GL30.*;
+import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.system.MemoryUtil.*;
+import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
+import static org.lwjgl.system.MemoryStack.stackPush;
 
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 
-import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
-import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.system.MemoryStack.stackPush;
-import static org.lwjgl.system.MemoryUtil.NULL;
-
 public class Engine
 {
-
-    // C constants
-    //static final byte NULL=0;
 
     // The window handle
     private long window;
     private int width, height;
     private boolean resizeViewPort;
     private boolean[] keyDown = new boolean[GLFW.GLFW_KEY_LAST];
-    private ArrayList<Entity> Entity = new ArrayList<Entity>();
+    private ArrayList<Entity> entities = new ArrayList<Entity>();
     private boolean leftMouseDown;
     private boolean rightMouseDown;
     private long lastTick=0;
@@ -114,15 +110,10 @@ public class Engine
 
         // Make the OpenGL context current
         glfwMakeContextCurrent(window);
+
         // Enable v-sync
         glfwSwapInterval(1);
 
-        // Make the window visible
-        glfwShowWindow(window);
-    }
-
-    private void loop()
-    {
         // This line is critical for LWJGL's interoperation with GLFW's
         // OpenGL context, or any context that is managed externally.
         // LWJGL detects the context that is current in the current thread,
@@ -133,25 +124,105 @@ public class Engine
         //setup view matrix
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        glOrtho(-5, 5, -5, 5, 50, -50);
+        glOrtho(-5, 5, -5, 5, 5, -50);
         glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
 
         //enable depth testing
         glEnable(GL_DEPTH_TEST);
-        //glEnable(GL_CULL_FACE);
+        glEnable(GL_CULL_FACE);;
+
+        // Make the window visible
+        glfwShowWindow(window);
+
 
         // Set the clear color
         glClearColor(0.1f, 0.1f, 0.1f, 0.1f);
 
-        Entity player = new Player();
+        //add entities
+        entities.add(new EntityPlayer());
+        entities.add(new EntityBlock());
 
-        // Run the rendering loop until the user has attempted to close
+        for(int i=0; i<entities.size(); i++)
+            entities.get(i).create();
+    }
+
+    private void loop()
+    {
+
+        // Run the game loop until the user has attempted to close
         // the window or has pressed the ESCAPE key.
         while (!glfwWindowShouldClose(window))
         {
-            while(System.currentTimeMillis()-lastTick<17);
-                lastTick=System.currentTimeMillis();
 
+
+            double speed = 0.01;
+
+            if(keyDown[GLFW.GLFW_KEY_W]){
+                entities.get(0).position[0]+=Math.sin(entities.get(0).rotation[2])*speed;
+                entities.get(0).position[2]-=Math.cos(entities.get(0).rotation[2])*speed;
+            }
+            if(keyDown[GLFW.GLFW_KEY_S]){
+                entities.get(0).position[0]-=Math.sin(entities.get(0).rotation[2])*speed;
+                entities.get(0).position[2]+=Math.cos(entities.get(0).rotation[2])*speed;
+            }
+            if(keyDown[GLFW.GLFW_KEY_A]){
+                entities.get(0).position[0]-=Math.cos(entities.get(0).rotation[2])*speed;
+                entities.get(0).position[2]+=Math.sin(entities.get(0).rotation[2])*speed;
+            }
+            if(keyDown[GLFW.GLFW_KEY_D]){
+                entities.get(0).position[0]+=Math.cos(entities.get(0).rotation[2])*speed;
+                entities.get(0).position[2]-=Math.sin(entities.get(0).rotation[2])*speed;
+            }
+            if(keyDown[GLFW.GLFW_KEY_LEFT]){
+                entities.get(0).rotation[1]+=0.1;
+                entities.get(0).rotation[1]%=180;
+            }
+            if(keyDown[GLFW.GLFW_KEY_RIGHT]){
+                entities.get(0).rotation[1]-=0.1;
+                entities.get(0).rotation[1]%=180;
+            }
+
+            //Poll for window events. The key callback above will only be
+            //invoked during this call.
+            glfwPollEvents();
+
+            //not the right way to do it
+            glRotated(entities.get(0).rotation[2], 0, 0, 1);
+            glRotated(entities.get(0).rotation[1], 0, 1, 0);
+            glRotated(entities.get(0).rotation[0], 1, 0, 0);
+            glTranslated(-entities.get(0).position[0],-entities.get(0).position[1],-entities.get(0).position[2]);
+
+
+
+            //draw entitys
+            //glBegin(GL_TRIANGLES);
+            //glColor3f(1f, 0f, 0f);
+            //glVertex3f(-0.6f, -0.4f, 0f);
+            //glColor3f(0f, 1f, 0f);
+            //glVertex3f(0.6f, -0.4f, 0f);
+            //glColor3f(0f, 0f, 1f);
+            //glVertex3f(0f, 0.6f, 0f);
+            //glEnd();
+
+            //glDrawElements(GL_TRIANGLES, 6 * 6, GL_UNSIGNED_INT, NULL);
+
+            for(int i=0; i<entities.size(); i++)
+            {
+                Entity ent = entities.get(i);
+                glBindVertexArray(ent.entityVao);
+                glEnableVertexAttribArray(0);
+                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ent.positionVbo);
+                glDrawElements(GL_TRIANGLES, ent.indices.length, GL_UNSIGNED_INT, 0);
+                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+                glDisableVertexAttribArray(0);
+                glBindVertexArray(0);
+            }
+
+            glfwSwapBuffers(window); //swap the color buffers
+
+            while(System.currentTimeMillis()-lastTick<17);
+            lastTick=System.currentTimeMillis();
 
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
@@ -164,63 +235,10 @@ public class Engine
                     glViewport(0, (height - width) >>> 1, width, width);
                 resizeViewPort = false;
             }
-
-            double speed = 0.01;
-
-            if(keyDown[GLFW.GLFW_KEY_W]){
-                player.position[0]+=Math.sin(player.rotation[2])*speed;
-                player.position[2]-=Math.cos(player.rotation[2])*speed;
-            }
-            if(keyDown[GLFW.GLFW_KEY_S]){
-                player.position[0]-=Math.sin(player.rotation[2])*speed;
-                player.position[2]+=Math.cos(player.rotation[2])*speed;
-            }
-            if(keyDown[GLFW.GLFW_KEY_A]){
-                player.position[0]-=Math.cos(player.rotation[2])*speed;
-                player.position[2]+=Math.sin(player.rotation[2])*speed;
-            }
-            if(keyDown[GLFW.GLFW_KEY_D]){
-                player.position[0]+=Math.cos(player.rotation[2])*speed;
-                player.position[2]-=Math.sin(player.rotation[2])*speed;
-            }
-            if(keyDown[GLFW.GLFW_KEY_LEFT]){
-                player.rotation[1]+=0.1;
-                player.rotation[1]%=180;
-            }
-            if(keyDown[GLFW.GLFW_KEY_RIGHT]){
-                player.rotation[1]-=0.1;
-                player.rotation[1]%=180;
-            }
-
-            //not the right way to do it
-            glRotated(player.rotation[2], 0, 0, 1);
-            glRotated(player.rotation[1], 0, 1, 0);
-            glRotated(player.rotation[0], 1, 0, 0);
-            glTranslated(-player.position[0],-player.position[1],-player.position[2]);
-
-            //draw entitys
-            glBegin(GL_TRIANGLES);
-            glColor3f(1f, 0f, 0f);
-            glVertex3f(-0.6f, -0.4f, 0f);
-            glColor3f(0f, 1f, 0f);
-            glVertex3f(0.6f, -0.4f, 0f);
-            glColor3f(0f, 0f, 1f);
-            glVertex3f(0f, 0.6f, 0f);
-            glEnd();
-
-
-            //glDrawElements(GL_TRIANGLES, 6 * 6, GL_UNSIGNED_INT, NULL);
-
-            glfwSwapBuffers(window); //swap the color buffers
-
-            //Poll for window events. The key callback above will only be
-            //invoked during this call.
-            glfwPollEvents();
         }
     }
 
     //icon code
-
     private void setIcon()
     {
         int numberOfImages=10;
