@@ -75,11 +75,13 @@ public class Entity
         glBindBuffer(GL_ARRAY_BUFFER, positionVbo);
         glBufferData(GL_ARRAY_BUFFER, positionBuffer, GL_STATIC_DRAW);
         glVertexAttribPointer(0,3, GL_FLOAT,false,0,0);
+        //glEnableVertexAttribArray(0); //saw an example and thought id try it
         glBindBuffer(GL_ARRAY_BUFFER,0);
 
         glBindBuffer(GL_ARRAY_BUFFER, colourVbo);
         glBufferData(GL_ARRAY_BUFFER, colourBuffer, GL_STATIC_DRAW);
-        glVertexAttribPointer(0,3, GL_FLOAT,false,0,0);
+        glVertexAttribPointer(1,3, GL_FLOAT,false,0,0);
+        //glEnableVertexAttribArray(1); //saw an example and thought id try it
         glBindBuffer(GL_ARRAY_BUFFER,0);
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexVbo);
@@ -89,6 +91,8 @@ public class Entity
 
     public void destroy()
     {
-
+        glDeleteBuffers(positionVbo);
+        glDeleteBuffers(colourVbo);
+        glDeleteBuffers(indexVbo);
     }
 }

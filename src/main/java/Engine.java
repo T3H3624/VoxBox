@@ -137,7 +137,7 @@ public class Engine
 
 
         // Set the clear color
-        glClearColor(0.1f, 0.1f, 0.1f, 0.1f);
+        glClearColor(0.1f, 0.5f, 0.5f, 0.1f);
 
         //add entities
         entities.add(new EntityPlayer());
@@ -212,10 +212,12 @@ public class Engine
                 Entity ent = entities.get(i);
                 glBindVertexArray(ent.entityVao);
                 glEnableVertexAttribArray(0);
+                glEnableVertexAttribArray(1);
                 glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ent.positionVbo);
                 glDrawElements(GL_TRIANGLES, ent.indices.length, GL_UNSIGNED_INT, 0);
                 glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
                 glDisableVertexAttribArray(0);
+                glDisableVertexAttribArray(1);
                 glBindVertexArray(0);
             }
 
