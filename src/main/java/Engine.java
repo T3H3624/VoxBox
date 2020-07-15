@@ -141,7 +141,7 @@ public class Engine
 
         //add entities
         entities.add(new EntityPlayer());
-        entities.add(new EntityBlock());
+        entities.add(new EntityPlane());
 
         for(int i=0; i<entities.size(); i++)
             entities.get(i).create();
@@ -192,8 +192,6 @@ public class Engine
             glRotated(entities.get(0).rotation[1], 0, 1, 0);
             glRotated(entities.get(0).rotation[0], 1, 0, 0);
             glTranslated(-entities.get(0).position[0],-entities.get(0).position[1],-entities.get(0).position[2]);
-
-
 
             //draw entitys
             //glBegin(GL_TRIANGLES);

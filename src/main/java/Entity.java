@@ -87,12 +87,17 @@ public class Entity
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexVbo);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexBuffer, GL_STATIC_DRAW);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
+
+
     }
 
     public void destroy()
     {
+        //delete relevant vertex buffer objects
         glDeleteBuffers(positionVbo);
         glDeleteBuffers(colourVbo);
         glDeleteBuffers(indexVbo);
+        //delete vertex array object
+        glDeleteVertexArrays(entityVao);
     }
 }
