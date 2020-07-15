@@ -80,7 +80,7 @@ public class Entity
 
         glBindBuffer(GL_ARRAY_BUFFER, colourVbo);
         glBufferData(GL_ARRAY_BUFFER, colourBuffer, GL_STATIC_DRAW);
-        glVertexAttribPointer(1,3, GL_FLOAT,false,0,0);
+        glVertexAttribPointer(1,3, GL_FLOAT,true,0,0);
         //glEnableVertexAttribArray(1); //saw an example and thought id try it
         glBindBuffer(GL_ARRAY_BUFFER,0);
 
